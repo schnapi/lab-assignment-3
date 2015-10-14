@@ -3,6 +3,7 @@
 #include "y.tab.h"
 
 static int lbl;
+static int i=0;
 
 // here we need replace push, pop,... with i386 assembler instructions
 //You will need to allocate space for the symbol table and emit some
@@ -10,13 +11,28 @@ static int lbl;
 /*a few lines to clean up, s*/
 int ex(nodeType *p) {
     int lbl1, lbl2;
-
+    //print assembly header
+    if(i++==0) {
+    	char *initialisedData = ".data # Initialised data\n\tNEWLINE: .asciz \"\\n\"";
+    	printf(".code32\n%s\n.bss #uninitialised data\n",initialisedData);
+    	puts("\t.lcomm TEMP1, 4");
+    	//print variables
+    	char c;
+		  for(c='a'; c<='z'; ++c)
+		     printf("\t.lcomm %c,1\n",c);
+			printf(".text\n.globl _start # _start on linux\n");	
+			char *types="\t.type print, @function\n\t.type printNumber, @function";
+			char* printNumber="\n\tprintNumber:\n\t\tloop:\n\t\t\tmovl $0, %edx\n\t\t\tmovl $10, %ebx\n\t\t\tdivl %ebx\n\t\t\taddl $48, %edx\n\t\t\tpushl %edx\n\t\t\tincl %esi\n\t\t\tcmpl $0, %eax\n\t\t\tjz   next\n\t\t\tjmp loop\n\n\t\tnext:\n\t\t\tcmpl $0, %esi\n\t\t\tjz   return\n\t\t\tdecl %esi\n\t\t\tmovl $4, %eax\n\t\t\tmovl %esp, %ecx\n\t\t\tmovl $1, %ebx\n\t\t\tmovl $1, %edx\n\t\t\tint  $0x80\n\t\t\taddl $4, %esp\n\t\t\tjmp  next \n\t\treturn:\n\t\t\tret";
+			char* print="\n\tprint:\n\t\tmovl $4, %eax\n\t\tmovl $1, %ebx\n\t\tmovl 4(%esp), %ecx #point to first argument which is on the stack\n\t\tmovl 8(%esp), %edx #point to first argument which is on the stack\n\t\tint $0x80 # call kernel\n\t\tret #change eip to start next instruction";
+			printf("%s%s%s\n",types,printNumber, print);
+			printf("_start:\n");
+		}
     if (!p) return 0;
     switch(p->type) {
     case typeCon:       
-        printf("\tpush\t%d\n", p->con.value); 
+        printf("\tpush\t$%d\n", p->con.value); 
         break;
-    case typeId:        
+    case typeId:
         printf("\tpush\t%c\n", p->id.i + 'a'); 
         break;
     case typeOpr:
@@ -48,7 +64,10 @@ int ex(nodeType *p) {
             break;
         case PRINT:     
             ex(p->opr.op[0]);
-            printf("\tprint\n");
+            puts("\tpop %eax");
+            printf("\tcall printNumber\n");
+            //print new line
+            puts("\tpush $1\n\tpush $NEWLINE\n\tcall print");
             break;
         case '=':       
             ex(p->opr.op[1]);
@@ -64,14 +83,15 @@ int ex(nodeType *p) {
 	    break;
 	case LNTWO:
 	    ex(p->opr.op[0]);
-	    printf("\lntwo\n");
+	    printf("\tlntwo\n");
 	    break;
         default:
             ex(p->opr.op[0]);
             ex(p->opr.op[1]);
             switch(p->opr.oper) {
 	    case GCD:   printf("\tgcd\n"); break;
-            case '+':   printf("\tadd\n"); break;
+	    			//get from the stack and save into TEMP1 then into eax and add TEMP1 to eax, push on the stack
+            case '+':   puts("\tpop TEMP1\n\tpop %eax\n\tadd TEMP1, %eax\n\tpush %eax\n"); break;
             case '-':   printf("\tsub\n"); break; 
             case '*':   printf("\tmul\n"); break;
             case '/':   printf("\tdiv\n"); break;
