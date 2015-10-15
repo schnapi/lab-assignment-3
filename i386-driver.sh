@@ -12,9 +12,6 @@ if [ "$1" != *.calc ]; then
   exit 1
 fi
 
-#runs the compiler
-make
-
 runableObjectFile=`echo $1 | sed 's/.calc$//'`
 #run program, input is text from $1
 assemblyCode=`cat "$1" | bin/calc3i`
@@ -31,6 +28,8 @@ OBJ="$runableObjectFile.o"
 
 #After that your driver should call ’gcc’ (or ’as’ and ’ld’ separately) to assemble and link the assembly file to produce runnable code
 
+#runs the compiler
+make
 as --32 -gstabs $SRC -o $OBJ
 # linker
 ld -m elf_i386 $OBJ -o $runableObjectFile

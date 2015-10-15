@@ -79,50 +79,63 @@
 		movl 8(%esp), %edx #point to first argument which is on the stack
 		int $0x80 # call kernel
 		ret #change eip to start next instruction
-	gcd:
-		movl 8(%esp), %eax #get first parameter
-		movl 4(%esp), %edx #get second parameter
-		start:
-			cmp %eax, %edx
-			je	end
-			cmp %edx, %eax
-			jg	middle #if eax > edx then jmp
-			sub %eax, %edx #assign edx
-			jmp	start
-		middle:
-			sub %edx, %eax #assign eax
-			jmp	start
-		end:
-			ret
+	.include "lib/gcd.s"
 _start:
-	push	$1
-	push	$2
+	push	$732
+	pop	a
+	push	$2684
+	pop	b
+L000:
+	push	a
+	push	b
+	pop TEMP1
+	pop %eax
+	cmp TEMP1,%eax
+	je	L001
+	push	a
+	push	b
+	pop TEMP1
+	pop %eax
+	cmp TEMP1,%eax
+	jle	L002
+	push	a
+	push	b
 	pop TEMP1
 	pop %eax
 	sub TEMP1, %eax
 	push %eax
 
-	pop	n
-	push	n
-	pop %eax
-	call printNumber
-	push $1
-	push $NEWLINE
-	call print
-	push	n
-	push	$2
+	pop	a
+	jmp	L003
+L002:
+	push	b
+	push	a
 	pop TEMP1
 	pop %eax
-	add TEMP1, %eax
+	sub TEMP1, %eax
 	push %eax
 
-	pop	n
-	push	n
+	pop	b
+L003:
+	jmp	L000
+L001:
+	push	a
 	pop %eax
 	call printNumber
 	push $1
 	push $NEWLINE
 	call print
+	addl $8, %esp
+	push	a
+	push	b
+	call gcd
+	push %eax
+	pop %eax
+	call printNumber
+	push $1
+	push $NEWLINE
+	call print
+	addl $8, %esp
 exit:
 	movl $0,%ebx # first argument: exit code
 	movl $1,%eax # system call number (sys_exit)
