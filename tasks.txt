@@ -1,0 +1,11 @@
+3.3 Additional Functions
+
+1. fact - Take one argument and return the factorial of that argument. For
+example: 0! = 1.
+2. lntwo - Take one argument and return the binary logarithm of that argument.
+For example: lntwo 32 = 5.
+
+
+
+3.5 C Stack Machine
+
