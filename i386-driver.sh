@@ -12,24 +12,31 @@ if [ "$1" != *.calc ]; then
   exit 1
 fi
 
+#runs the compiler
+make
+
 runableObjectFile=`echo $1 | sed 's/.calc$//'`
 #run program, input is text from $1
 assemblyCode=`cat "$1" | bin/calc3i`
 # assemblyFile
-SRC="$runableObjectFile.s"
-
-assemblyHeader=".code32\n.data\n.bss\n"
+sourceFolder="src"
+SRC="$sourceFolder/$runableObjectFile.s"
 
 # write assembly code to assembly file
 printf "%s" "$assemblyCode" > $SRC
+#we print code for exit here, I could not include this code in calc3i.c
 echo '\nexit:\n\tmovl $0,%ebx # first argument: exit code\n\tmovl $1,%eax # system call number (sys_exit)\n\tint $0x80 # call kernel\n' >> $SRC
 
-OBJ="$runableObjectFile.o"
+libFolder="lib"
+OBJ="$libFolder/$runableObjectFile.o"
+
+gcdOBJ=$libFolder/gcd.lib
+gcdSRC=$sourceFolder/gcd.s
 
 #After that your driver should call ’gcc’ (or ’as’ and ’ld’ separately) to assemble and link the assembly file to produce runnable code
-
-#runs the compiler
-make
+# create and link object files
 as --32 -gstabs $SRC -o $OBJ
-# linker
-ld -m elf_i386 $OBJ -o $runableObjectFile
+as --32 -gstabs $gcdSRC -o $gcdOBJ
+
+# linker, link all object files 
+ld -m elf_i386 -nostdlib $OBJ $gcdOBJ -o bin/$runableObjectFile

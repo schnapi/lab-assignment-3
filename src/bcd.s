@@ -35,7 +35,6 @@
 .globl _start # _start on linux
 	.type print, @function
 	.type printNumber, @function
-	.type gcd, @function
 	printNumber:
 		movl $0, COUNTER
 		cmpl $0, %eax #is it negative number
@@ -79,7 +78,6 @@
 		movl 8(%esp), %edx #point to first argument which is on the stack
 		int $0x80 # call kernel
 		ret #change eip to start next instruction
-	.include "lib/gcd.s"
 _start:
 	push	$732
 	pop	a
