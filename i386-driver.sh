@@ -25,7 +25,7 @@ SRC="$sourceFolder/$runableObjectFile.s"
 # write assembly code to assembly file
 printf "%s" "$assemblyCode" > $SRC
 #we print code for exit here, I could not include this code in calc3i.c
-echo '\nexit:\n\tmovl $0,%ebx # first argument: exit code\n\tmovl $1,%eax # system call number (sys_exit)\n\tint $0x80 # call kernel\n' >> $SRC
+printf '\nexit:\n\tmovl $0,%%ebx # first argument: exit code\n\tmovl $1,%%eax # system call number (sys_exit)\n\tint $0x80 # call kernel\n' >> $SRC
 
 libFolder="lib"
 OBJ="$libFolder/$runableObjectFile.o"
