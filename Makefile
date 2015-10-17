@@ -8,5 +8,5 @@ all:
 	cd $(FOLDER) && mv -t buildCode y.tab.c y.tab.h lex.yy.c lex.yy.o y.tab.o
 	
 clean:
-	cd $(FOLDER)buildCode && rm y.tab.c y.tab.h lex.yy.c lex.yy.o y.tab.o
-	rm bin/calc3i
+	cd $(FOLDER)buildCode && rm -f y.tab.c y.tab.h lex.yy.c lex.yy.o y.tab.o
+	rm -f bin/calc3i
