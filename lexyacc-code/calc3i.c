@@ -81,7 +81,7 @@ int ex(nodeType *p) {
             break;
 	case FACT:
   	    ex(p->opr.op[0]);
-	    printf("\tfact\n");
+	    puts("\tcall fact\n\tpush %eax");
 	    break;
 	case LNTWO:
 	    ex(p->opr.op[0]);

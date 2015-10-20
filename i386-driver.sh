@@ -33,10 +33,15 @@ OBJ="$libFolder/$runableObjectFile.o"
 gcdOBJ=$libFolder/gcd.lib
 gcdSRC=$sourceFolder/gcd.s
 
+
+factOBJ=$libFolder/fact.lib
+factSRC=$sourceFolder/fact.s
+
 #After that your driver should call ’gcc’ (or ’as’ and ’ld’ separately) to assemble and link the assembly file to produce runnable code
 # create and link object files
 as --32 -gstabs $SRC -o $OBJ
 as --32 -gstabs $gcdSRC -o $gcdOBJ
+as --32 -gstabs $factSRC -o $factOBJ
 
 # linker, link all object files 
-ld -m elf_i386 -nostdlib $OBJ $gcdOBJ -o bin/$runableObjectFile
+ld -m elf_i386 -nostdlib $OBJ $gcdOBJ $factOBJ -o bin/$runableObjectFile
