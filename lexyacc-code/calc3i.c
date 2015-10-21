@@ -85,7 +85,7 @@ int ex(nodeType *p) {
 	    break;
 	case LNTWO:
 	    ex(p->opr.op[0]);
-	    printf("\tlntwo\n");
+	    puts("\tcall lntwo\n\tpush %eax");
 	    break;
         default:
             ex(p->opr.op[0]);
