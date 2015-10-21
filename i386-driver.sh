@@ -44,6 +44,7 @@ lntwoSRC=$sourceFolder/lntwo.s
 as --32 -gstabs $SRC -o $OBJ
 as --32 -gstabs $gcdSRC -o $gcdOBJ
 as --32 -gstabs $lntwoSRC -o $lntwoOBJ
+as --32 -gstabs $factSRC -o $factOBJ
 
 # linker, link all object files 
 ld -m elf_i386 -nostdlib $OBJ $gcdOBJ $factOBJ $lntwoOBJ -o bin/$runableObjectFile
