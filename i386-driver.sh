@@ -7,15 +7,22 @@ if [ "$#" -ne 1 ]; then
   exit 1
 fi
 
-if [ "$1" != *.calc ]; then
+case "$1" in
+*.calc ) 
+        ;;
+*)
   echo "Error: File shall contain .calc extension"
   exit 1
-fi
+        ;;
+esac
+
+#remove path
+fileName=$(echo $1 | awk -F/ '{print $(NF)}')
 
 #runs the compiler
 make
 
-runableObjectFile=`echo $1 | sed 's/.calc$//'`
+runableObjectFile=`echo $fileName | sed 's/.calc$//'`
 #run program, input is text from $1
 assemblyCode=`cat "$1" | bin/calc3i`
 # assemblyFile
